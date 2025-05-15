@@ -6,15 +6,5 @@
     "unity": "2019.1",
     "dependencies": {
         "com.unity.mistral-ai" : "1.0.0"
-    },
-    "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
-    ],
-    "author": {
-        "name": "Unity",
-        "email": "unity@example.com",
-        "url": "https://github.com/bread-thief"
     }
 }
