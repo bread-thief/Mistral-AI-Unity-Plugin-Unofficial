@@ -1,0 +1,20 @@
+{
+    "name": "com.unity.mistral-ai",
+    "version": "1.0.0",
+    "displayName": "Mistral AI",
+    "description": "This project is designed to simplify Unity's interaction with the Mistral AI API. After setting up the API Key and URL, you can access Mistral from your scripts.",
+    "unity": "2019.1",
+    "dependencies": {
+        "com.unity.mistral-ai" : "1.0.0"
+    },
+    "keywords": [
+        "keyword1",
+        "keyword2",
+        "keyword3"
+    ],
+    "author": {
+        "name": "Unity",
+        "email": "unity@example.com",
+        "url": "https://github.com/bread-thief"
+    }
+}
