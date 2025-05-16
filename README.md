@@ -1,5 +1,5 @@
 # Mistral AI Unity Plugin (Unofficial)
-![Project logo](Mistral-AI-Unity-Plugin-Unofficial/Textures/Banner.png)
+![Project logo](https://ibb.co/Fb5p9d2f)
 
 ### Description
 This is an unofficial Unity plugin that allows you to quickly set up integration with the Mistral AI API. All you need is to specify the API Key and URL, without installing additional components or complex settings.
