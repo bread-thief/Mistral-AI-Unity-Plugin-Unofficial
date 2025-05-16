@@ -10,7 +10,7 @@ public abstract class MistralHelpWindow : EditorWindow
     protected virtual void OnEnable()
     {
         if (icon == null)
-            icon = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Plugins/MistralAI/Textures/MistralIcon.png");
+            icon = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/MistralAI/Textures/MistralIcon.png");
     }
 
     protected void Initialize(string windowTitle)
@@ -145,7 +145,7 @@ public class MistralConfigurationWindow : EditorWindow
 
     private void OnEnable()
     {
-        bannerTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Plugins/MistralAI/Textures/Banner.png");
+        bannerTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/MistralAI/Textures/Banner.png");
         Vector2 size = new Vector2(bannerTexture.width / 2, bannerTexture.height + 10);
         this.minSize = size;
         this.maxSize = size;
