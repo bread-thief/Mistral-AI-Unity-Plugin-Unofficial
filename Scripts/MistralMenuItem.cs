@@ -2,28 +2,19 @@ using Mistral.AI.Components;
 using UnityEditor;
 using UnityEngine;
 
-public static class MistralHelpWindows
+public static class MistralIcons
 {
-    private static Texture2D icon;
-
-    public static void InitializeIcon()
+    public static Texture2D Icon;
+    public static void LoadIcon()
     {
-        if (icon == null)
-            icon = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/MistralAI/Textures/MistralIcon.png");
-    }
-
-    public static T ShowWindow<T>(string menuPath, string windowTitle) where T : EditorWindow
-    {
-        T window = GetWindow<T>();
-        return window;
+        if (Icon == null)
+            Icon = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/MistralAI/Textures/MistralIcon.png");
     }
 }
 
 public abstract class MistralHelpWindow : EditorWindow
 {
     protected static Texture2D icon;
-
-    protected string title;
 
     public static void InitializeIcon()
     {
@@ -37,6 +28,8 @@ public abstract class MistralHelpWindow : EditorWindow
         window.Initialize(windowTitle);
         return window;
     }
+
+    protected string title;
 
     protected void Initialize(string windowTitle)
     {
@@ -68,26 +61,32 @@ public abstract class MistralHelpWindow : EditorWindow
         if (GUILayout.Button(ButtonText))
             Application.OpenURL(UrlLink);
         if (GUILayout.Button(CloseButtonText))
-            this.Close();
+            Close();
         GUILayout.EndVertical();
     }
 }
 
 public static class MistralApiHelp
 {
+    [MenuItem("MistralAI/Help/ApiKey")]
     public static void ShowApiKeyHelp()
     {
-        MistralHelpWindow.ShowWindow<MistralApiKeyHelp>("MistralAI/Help/ApiKey", "MistralAI Help");
+        MistralIcons.LoadIcon();
+        MistralHelpWindow.ShowWindow<MistralApiKeyHelp>("MistralAI/Help/ApiKey");
     }
 
+    [MenuItem("MistralAI/Help/ApiURL")]
     public static void ShowApiUrlHelp()
     {
-        MistralHelpWindow.ShowWindow<MistralApiUrlHelp>("MistralAI/Help/ApiURL", "MistralAI Help");
+        MistralIcons.LoadIcon();
+        MistralHelpWindow.ShowWindow<MistralApiUrlHelp>("MistralAI/Help/ApiURL");
     }
 
+    [MenuItem("MistralAI/Help/Models")]
     public static void ShowModelsHelp()
     {
-        MistralHelpWindow.ShowWindow<MistralModelsHelp>("MistralAI/Help/Models", "MistralAI Help");
+        MistralIcons.LoadIcon();
+        MistralHelpWindow.ShowWindow<MistralModelsHelp>("MistralAI/Help/Models");
     }
 }
 
@@ -104,9 +103,6 @@ public class MistralApiKeyHelp : MistralHelpWindow
     protected override string UrlLink => "https://console.mistral.ai/";
     protected override string ButtonText => "URL";
     protected override string CloseButtonText => "Close";
-
-    [MenuItem("MistralAI/Help/ApiKey")]
-    public static void ShowWindow() => MistralApiHelp.ShowApiKeyHelp();
 }
 
 public class MistralApiUrlHelp : MistralHelpWindow
@@ -119,9 +115,6 @@ public class MistralApiUrlHelp : MistralHelpWindow
     protected override string UrlLink => "https://docs.mistral.ai/api/";
     protected override string ButtonText => "URL";
     protected override string CloseButtonText => "Close";
-
-    [MenuItem("MistralAI/Help/ApiURL")]
-    public static void ShowWindow() => MistralApiHelp.ShowApiUrlHelp();
 }
 
 public class MistralModelsHelp : MistralHelpWindow
@@ -134,35 +127,7 @@ public class MistralModelsHelp : MistralHelpWindow
     protected override string UrlLink => "https://docs.mistral.ai/getting-started/models/models_overview/";
     protected override string ButtonText => "URL";
     protected override string CloseButtonText => "Close";
-
-    [MenuItem("MistralAI/Help/Models")]
-    public static void ShowWindow() => MistralHelpWindow.ShowWindow<MistralModelsHelp>("MistralAI/Help/Models", "MistralAI Help");
 }
-
-/*public static class MistralMistralAIChatMenuItem
-{
-    [MenuItem("MistralAI/MistralAIChat")]
-    public static void ShowWindow()
-    {
-        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Plugins/MistralAI/Prefabs/MistralAIChat.prefab");
-
-        if (prefab == null)
-        {
-            Debug.LogWarning("Please, restore prefab");
-            return;
-        }
-
-        GameObject instance = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
-        if (instance != null)
-        {
-            Undo.RegisterCreatedObjectUndo(instance, "Spawn Prefab");
-            instance.transform.position = Vector3.zero;
-            Selection.activeObject = instance;
-        }
-        else
-            Debug.LogError("Failed to create prefab instance");
-    }
-}*/
 
 public static class MistralConfiguration
 {
@@ -173,14 +138,8 @@ public static class MistralConfiguration
     public static void ShowWindow()
     {
         LoadSettings();
-        GetWindow<MistralConfiguration>("MistralAI Configuration").OnGUIInternal();
-    }
-
-    private static void OnEnable()
-    {
-        bannerTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/MistralAI/Textures/Banner.png");
-        if (bannerTexture != null)
-            Vector2 size = new Vector2(bannerTexture.width / 2, bannerTexture.height + 10);
+        var window = GetWindow<MistralConfigWindow>("MistralAI Configuration");
+        window.OnGUIInternal();
     }
 
     public static void LoadSettings()
@@ -202,6 +161,7 @@ public static class MistralConfiguration
             AssetDatabase.CreateAsset(settings, $"{path}/MistralApiSettings.asset");
             AssetDatabase.SaveAssets();
         }
+        bannerTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/MistralAI/Textures/Banner.png");
     }
 
     public static void OnGUIInternal()
@@ -210,13 +170,12 @@ public static class MistralConfiguration
         {
             float bannerWidth = bannerTexture.width / 2;
             float bannerHeight = bannerTexture.height / 2;
-
             Rect bannerRect = new Rect(10, 10, bannerWidth, bannerHeight);
             GUI.DrawTexture(bannerRect, bannerTexture, ScaleMode.ScaleToFit);
             GUILayout.Space(bannerHeight + 10);
             if (settings == null)
             {
-                Debug.LogWarning("Settings asset not found or created.");
+                Debug.LogWarning("Settings asset not found");
                 return;
             }
             GUIStyle centeredStyle = new GUIStyle(EditorStyles.whiteLargeLabel);
@@ -239,21 +198,11 @@ public static class MistralConfiguration
             Debug.LogError("Banner not found!");
         }
     }
-
-    public static MistralApiSettings GetSettings()
-    {
-        string[] guids = AssetDatabase.FindAssets("t:MistralApiSettings");
-        if (guids.Length > 0)
-        {
-            string path = AssetDatabase.GUIDToAssetPath(guids[0]);
-            return AssetDatabase.LoadAssetAtPath<MistralApiSettings>(path);
-        }
-        return null;
-    }
 }
 
 public static class MistralDocumentation
 {
+    [MenuItem("MistralAI/Documentation")]
     public static void Open()
     {
         Application.OpenURL("https://docs.mistral.ai/");
