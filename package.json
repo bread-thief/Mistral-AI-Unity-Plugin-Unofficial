@@ -5,14 +5,7 @@
     "description": "This project is designed to simplify Unity's interaction with the Mistral AI API. After setting up the API Key and URL, you can access Mistral from your scripts.",
     "unity": "2019.1",
     "dependencies": {
-        "com.unity.collab-proxy": "1.2.16",
-        "com.unity.test-framework": "1.1.22",
-        "com.unity.ugui": "1.0.0",
-        "jillejr.newtonsoft.json-for-unity": "13.0.102",
-        "com.unity.nuget.newtonsoft-json": "3.0.1",
-        "jillejr.newtonsoft.json-for-unity.converters": "1.0.0",
-        "com.unity.modules.ai": "1.0.0",
-        "com.unity.modules.androidjni": "1.0.0"
+        "https://github.com/jilleJr/Newtonsoft.Json-for-Unity.git#upm": "10.0.302"
     },
     "samples":[
         {
