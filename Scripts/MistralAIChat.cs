@@ -52,29 +52,26 @@ namespace Mistral.AI
         private static IEnumerator SendRequestEnumerator(string prompt)
         {
             currentResponse = "";
-
             var messages = new Message[] { new Message("user", prompt) };
             var requestData = new Request(GetModelName(), messages);
             string jsonData = JsonConvert.SerializeObject(requestData);
 
-            using (UnityWebRequest request = new UnityWebRequest(Data.GetApiUrl(), "POST"))
+            using (UnityWebRequest request = UnityWebRequest.PostWwwForm(Data.GetApiUrl(), "POST"))
             {
                 byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
                 request.uploadHandler = new UploadHandlerRaw(bodyRaw);
                 request.downloadHandler = new DownloadHandlerBuffer();
                 request.SetRequestHeader("Content-Type", "application/json");
                 request.SetRequestHeader("Authorization", $"Bearer {Data.GetApiKey()}");
-
                 yield return request.SendWebRequest();
 
                 if (request.result == UnityWebRequest.Result.Success)
                 {
                     string responseJson = request.downloadHandler.text;
-                    MistralLogger.Log($"Server response: {responseJson}");
                     var response = JsonConvert.DeserializeObject<Response>(responseJson);
-                    if (response?.GetChoices() != null && response.GetChoices().Length > 0)
+                    if (response?.Choices != null && response.Choices.Length > 0)
                     {
-                        string reply = response.GetChoices()[0].GetMessage().GetContent();
+                        string reply = response.Choices[0].Message.Content;
                         currentResponse = reply;
                         AppendChat($"\nAssistant: {reply}\n");
                     }
@@ -109,47 +106,39 @@ namespace Mistral.AI
         public class Request
         {
             [JsonProperty("model")]
-            private string model;
+            public string Model { get; set; }
             [JsonProperty("messages")]
-            private Message[] messages;
-
+            public Message[] Messages { get; set; }
             public Request(string model, Message[] messages)
             {
-                this.model = model;
-                this.messages = messages;
+                Model = model;
+                Messages = messages;
             }
         }
 
         public class Message
         {
             [JsonProperty("role")]
-            private string role;
+            public string Role { get; set; }
             [JsonProperty("content")]
-            private string content;
-
+            public string Content { get; set; }
             public Message(string role, string content)
             {
-                this.role = role;
-                this.content = content;
+                Role = role;
+                Content = content;
             }
-
-            public string GetContent() => content;
         }
 
         public class Response
         {
             [JsonProperty("choices")]
-            private Choice[] choices;
-
-            public Choice[] GetChoices() => choices;
+            public Choice[] Choices { get; set; }
         }
 
         public class Choice
         {
             [JsonProperty("message")]
-            private Message message;
-
-            public Message GetMessage() => message;
+            public Message Message { get; set; }
         }
 
         public enum ModelType
