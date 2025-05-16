@@ -5,14 +5,13 @@
     "description": "This project is designed to simplify Unity's interaction with the Mistral AI API. After setting up the API Key and URL, you can access Mistral from your scripts.",
     "unity": "2019.1",
     "dependencies": {
-        "com.jillejr.newtonsoft-json-for-unity": "https://github.com/jilleJr/Newtonsoft.Json-for-Unity.git#upm",
-        "com.unity.mistral-ai": "https://github.com/bread-thief/Mistral-AI-Unity-Plugin-Unofficial.git"
+        "com.jillejr.newtonsoft-json-for-unity": "https://github.com/jilleJr/Newtonsoft.Json-for-Unity.git#a26d7f8b9c4d"
     },
-    "samples":[
+    "samples": [
         {
-        "displayName": "Mistral AI Chat Example",
-        "description": "",
-        "path": "Example~/Mistral AI Chat Example"
+            "displayName": "Mistral AI Chat Example",
+            "description": "",
+            "path": "Example~/Mistral AI Chat Example"
         }
     ]
 }
