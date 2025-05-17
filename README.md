@@ -1,4 +1,3 @@
-```markdown
 # Mistral AI Unity Plugin (Unofficial)
 ![Project logo](https://ltdfoto.ru/images/2025/05/16/Banner.png)
 
@@ -31,7 +30,7 @@ This project is designed to simplify Unity's interaction with the Mistral AI API
 ### Download and Install <a name="download-and-install"></a>
 1. **Install NuGet**
    - Copy the link or do it in the [NuGetForUnity repository](https://github.com/GlitchEnzo/NuGetForUnity).
-   https://github.com/GlitchEnzo/NuGetForUnity.git
+   *https://github.com/GlitchEnzo/NuGetForUnity.git*
 2. **Extract the Files**
    - Extract the contents of the ZIP file to a location of your choice.
 
