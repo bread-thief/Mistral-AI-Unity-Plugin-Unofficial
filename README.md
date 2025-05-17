@@ -1,23 +1,24 @@
-# Mistral AI Unity Plugin (Unofficial)
-![Project logo](https://ltdfoto.ru/images/2025/05/16/Banner.png)
+# Mistral AI Unity Plugin (Unofficial) 🌟
 
-### Description
-This is an unofficial Unity plugin that allows you to quickly set up integration with the Mistral AI API. All you need is to specify the API Key and URL, without installing additional components or complex settings.
+![Project logo](https://i.ibb.co/jPdH5KDD/Banner.png)
+
+### 📰 Description
+This is an unofficial plugin for Unity that allows you to quickly set up integration with the Mistral AI API. All you need is to specify the API Key and URL, without installing additional components or complex settings.
 
 ---
 
 ## 📝 Table of Contents
 - [Overview](#overview)
 - [Getting Started](#getting-started)
-- [Download and Install](#download-and-install)
+- [Download-and-install](#download-and-install)
 - [Usage](#usage)
-- [Built Using](#built-using)
+- [Built-using](#built-using)
 - [Authors](#authors)
 
 ---
 
 ## 🧐 Overview <a name="overview"></a>
-This project is designed to simplify Unity's interaction with the Mistral AI API. After setting up the API Key and URL, you can access Mistral from your scripts.
+This project is designed to simplify Unity's interaction with the Mistral AI API. Once you have set up the API Key and URL, you can access Mistral from your scripts.
 
 ---
 
@@ -25,67 +26,70 @@ This project is designed to simplify Unity's interaction with the Mistral AI API
 
 ### Prerequisites
 - Unity (supported versions)
-- API Key and URL from Mistral AI (get it on the website)
+- Mistral AI API Key and URL (get it from the website)
 
 ### Download and Install <a name="download-and-install"></a>
 1. **Install NuGet**
-   - Copy the link or do it in the [NuGetForUnity repository](https://github.com/GlitchEnzo/NuGetForUnity).
-   ~~~
-      https://github.com/GlitchEnzo/NuGetForUnity.git
-   ~~~
-   - In Unity, go to `Window > Package Manager > Custom Package`.
-   -![Alt text](https://ibb.co/r2SXJHY1)
-2. **Extract the Files**
-   - Extract the contents of the ZIP file to a location of your choice.
+- Copy the link or do it in the [**NuGetForUnity**](https://github.com/GlitchEnzo/NuGetForUnity) repository.
+~~~
+https://github.com/GlitchEnzo/NuGetForUnity.git
+~~~
+- In Unity, go to `Window > Package Manager`:
 
-3. **Open Unity Project**
-   - Open your Unity project where you want to integrate the Mistral AI plugin.
+![Alt ​​text](https://i.ibb.co/F4Mdtz2j/1.png)
 
-4. **Import the Plugin**
-   - In Unity, go to `Assets > Import Package > Custom Package`.
-   - Navigate to the location where you extracted the plugin files and select the `.unitypackage` file.
-   - Click on "Open" to import the plugin into your Unity project.
+- Paste the copied link and click the "Install" button:
 
-5. **Set Up API Key and URL**
-   - In Unity, open the menu: `MistralAI/Help`.
-   - In the window that appears, find out how to get:
-     - **API Key** — your key
-     - **API URL** — the address of the server API
+![Alt ​​text](https://i.ibb.co/SwyR7L0z/2.png)
 
-6. **Verify Installation**
-   - Ensure that the plugin is correctly imported and there are no errors in the Unity console.
+2. **Installing Newtonsoft.Json**
+- After installing NuGet, the NuGet tab should appear:
 
-7. **Start Using the Plugin**
-   - You are now ready to use the Mistral AI Unity Plugin in your project.
+![Alt ​​text](https://i.ibb.co/TDh4Zppc/3.png)
 
-### How to set up
-1. In Unity, open the menu:
-- `MistralAI/Help`
-2. In the window that appears, find out how to get:
-- **API Key** — your key
-- **API URL** — the address of the server API
+- In Unity, go to `NuGet > Manage NuGet Packages`:
+
+![Alt text](https://i.ibb.co/Xf0RRJHn/4.png)
+
+- In the window that appears, find [**Newtonsoft.Json**](https://github.com/JamesNK/Newtonsoft.Json) in the list and click the "Install" button:
+
+![Alt ​​text](https://i.ibb.co/yndPtkYG/5.png)
+
+3. **Installing MistralAIUnityPlugin**
+- Copy the link.
+~~~
+https://github.com/bread-thief/Mistral-AI-Unity-Plugin-Unofficial.git
+~~~
+- In Unity, go to `Window > Package Manager`:
+
+![Alt ​​text](https://i.ibb.co/F4Mdtz2j/1.png)
+
+- Paste the copied link and click the "Install" button:
+
+![Alt ​​text](https://i.ibb.co/LdRFDzd0/6.png)
+
+- After installing the plugin, a tab with the same name should appear:
+
+![Alt ​​text](https://i.ibb.co/M0Mcrty/7.png)
 
 ---
 
-## 🚀 Usage <a name="usage"></a>
-After setting up the API Key and URL, you can access the API from your scripts. To do this, use the provided methods.
+## 🚀 Using <a name="usage"></a>
+Once you have set up the API Key and URL, you can access the AI ​​from your scripts. To do this, use the provided methods.
 
 ```csharp
 using UnityEngine;
 using Mistral.AI;
 
 public class UsagePlugin : MonoBehaviour
-{
-   private void Start()
-   {
-      MistralAIChat.SendRequest("Hello! 2+2=?", this, true);
-      string request = MistralAIChat.GetCurrentResponse();
-   }
+{ 
+    private void Start() 
+    { 
+        MistralAIChat.SendRequest("Hello! 2+2=?", this, true); 
+        string request = MistralAIChat.GetCurrentResponse(); 
+    }
 }
 ```
-
-![Usage Example](https://ltdfoto.ru/images/2025/05/16/UsageExample.png)
-
 ---
 
 ## ⛏️ Technologies used <a name="built-using"></a>
@@ -102,6 +106,3 @@ public class UsagePlugin : MonoBehaviour
 ---
 
 *Please note: this is an unofficial project and is not affiliated with Mistral AI.*
-```
-
-This version includes a script for usage and a field for text/link to an image under the usage section. Make sure to replace the GitHub repository link and the image URL with the actual links.
