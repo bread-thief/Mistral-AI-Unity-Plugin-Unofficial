@@ -34,7 +34,7 @@ This project is designed to simplify Unity's interaction with the Mistral AI API
       https://github.com/GlitchEnzo/NuGetForUnity.git
    ~~~
    - In Unity, go to `Window > Package Manager > Custom Package`.
-     (https://ibb.co/r2SXJHY1)
+     [https://ibb.co/r2SXJHY1]
 2. **Extract the Files**
    - Extract the contents of the ZIP file to a location of your choice.
 
