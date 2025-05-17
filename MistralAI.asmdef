@@ -1,0 +1,16 @@
+{
+    "name": "MistralAI",
+    "references": [
+        "UnityEngine.CoreModule",
+        "UnityEditor.CoreModule"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
