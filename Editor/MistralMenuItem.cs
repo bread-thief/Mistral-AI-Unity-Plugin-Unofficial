@@ -145,7 +145,7 @@ public class MistralConfigurationWindow : EditorWindow
 
     private void OnEnable()
     {
-        bannerTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/MistralAI/Textures/Banner.png");
+        bannerTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.unity.mistral-ai/Textures/Banner.png");
         Vector2 size = new Vector2(bannerTexture.width / 2, bannerTexture.height + 10);
         this.minSize = size;
         this.maxSize = size;
