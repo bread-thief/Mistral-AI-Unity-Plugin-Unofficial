@@ -68,7 +68,7 @@ https://github.com/bread-thief/Mistral-AI-Unity-Plugin-Unofficial.git
 
 ![Alt ​​text](https://i.ibb.co/LdRFDzd0/6.png)
 
-- After installing the plugin, a tab with the same name should appear:
+- After installing the plugin, a tab of the same name should appear, open the `MistralAI > Configuration` window and configure everything to work with AI:
 
 ![Alt ​​text](https://i.ibb.co/M0Mcrty/7.png)
 
