@@ -95,7 +95,7 @@ public class UsagePlugin : MonoBehaviour
 ## ⛏️ Technologies used <a name="built-using"></a>
 - Unity Engine
 - C#
-- NuGet
+- NuGet (Newtonsoft.Json)
 - MistralAI
 
 ---
