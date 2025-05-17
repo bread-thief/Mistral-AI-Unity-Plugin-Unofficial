@@ -2,7 +2,8 @@
     "name": "MistralAI",
     "references": [
         "UnityEngine.CoreModule",
-        "UnityEditor.CoreModule"
+        "UnityEditor.CoreModule",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
