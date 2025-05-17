@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2a36bb14dff5834882ee75493b67fb6, type: 3}
   m_Name: MistralApiSettings
   m_EditorClassIdentifier: 
-  <ApiKey>k__BackingField: 5h4VpP2HF6tTKOhz2Wr3gosh9IENl3jh
+  <ApiKey>k__BackingField: YOUR_MISTRAL_API_KEY
   <ApiUrl>k__BackingField: https://api.mistral.ai/v1/chat/completions
-  <Model>k__BackingField: 2
+  <Model>k__BackingField: 0

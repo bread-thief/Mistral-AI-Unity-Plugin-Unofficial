@@ -110,31 +110,6 @@ public class MistralModelsHelp : MistralHelpWindow
     public static void ShowWindow()=>ShowWindow<MistralModelsHelp>("MistralAI/Help/Models", "MistralAI Help");
 }
 
-/*public class MistralMistralAIChatMenuItem : EditorWindow
-{
-    [MenuItem("MistralAI/MistralAIChat")]
-    public static void ShowWindow()
-    {
-        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Plugins/MistralAI/Prefabs/MistralAIChat.prefab");
-
-        if (prefab == null)
-        {
-            Debug.LogWarning("Please, restore prefab");
-            return;
-        }
-
-        GameObject instance = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
-        if (instance != null)
-        {
-            Undo.RegisterCreatedObjectUndo(instance, "Spawn Prefab");
-            instance.transform.position = Vector3.zero;
-            Selection.activeObject = instance;
-        }
-        else
-            Debug.LogError("Failed to create prefab instance");
-    }
-}*/
-
 public class MistralConfigurationWindow : EditorWindow
 {
     private MistralApiSettings settings;

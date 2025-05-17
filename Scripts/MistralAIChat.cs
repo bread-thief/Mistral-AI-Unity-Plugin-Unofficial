@@ -69,9 +69,9 @@ namespace Mistral.AI
                 {
                     string responseJson = request.downloadHandler.text;
                     var response = JsonConvert.DeserializeObject<Response>(responseJson);
-                    if (response?.Choices != null && response.Choices.Length > 0)
+                    if (response?.GetChoices() != null && response.GetChoices().Length > 0)
                     {
-                        string reply = response.Choices[0].Message.Content;
+                        string reply = response.GetChoices()[0].GetMessage().GetContent();
                         currentResponse = reply;
                         AppendChat($"\nAssistant: {reply}\n");
                     }
@@ -106,39 +106,53 @@ namespace Mistral.AI
         public class Request
         {
             [JsonProperty("model")]
-            public string Model { get; set; }
+            private string model;
             [JsonProperty("messages")]
-            public Message[] Messages { get; set; }
+            private Message[] messages;
+
+            public string GetModel() => model;
+
+            public Message[] GetMessages() => messages;
+
             public Request(string model, Message[] messages)
             {
-                Model = model;
-                Messages = messages;
+                this.model = model;
+                this.messages = messages;
             }
         }
 
         public class Message
         {
             [JsonProperty("role")]
-            public string Role { get; set; }
+            private string role;
             [JsonProperty("content")]
-            public string Content { get; set; }
+            private string content;
+
+            public string GetRole() => role;
+
+            public string GetContent() => content;
+
             public Message(string role, string content)
             {
-                Role = role;
-                Content = content;
+                this.role = role;
+                this.content = content;
             }
         }
 
         public class Response
         {
             [JsonProperty("choices")]
-            public Choice[] Choices { get; set; }
+            private Choice[] choices;
+
+            public Choice[] GetChoices() => choices;
         }
 
         public class Choice
         {
             [JsonProperty("message")]
-            public Message Message { get; set; }
+            private Message message;
+
+            public Message GetMessage() => message;
         }
 
         public enum ModelType
