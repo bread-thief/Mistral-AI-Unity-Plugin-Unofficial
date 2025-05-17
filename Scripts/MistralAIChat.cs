@@ -2,8 +2,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
-using Mistral.AI.Components;
 using Mistral.AI.Logger;
+using Mistral.AI.Components;
 
 namespace Mistral.AI
 {

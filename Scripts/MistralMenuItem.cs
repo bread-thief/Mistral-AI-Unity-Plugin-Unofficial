@@ -145,7 +145,7 @@ public class MistralConfigurationWindow : EditorWindow
 
     private void OnEnable()
     {
-        bannerTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Plugins/MistralAI/Textures/Banner.png");
+        bannerTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/MistralAI/Textures/Banner.png");
         Vector2 size = new Vector2(bannerTexture.width / 2, bannerTexture.height + 10);
         this.minSize = size;
         this.maxSize = size;
@@ -162,7 +162,7 @@ public class MistralConfigurationWindow : EditorWindow
         else
         {
             settings = ScriptableObject.CreateInstance<MistralApiSettings>();
-            string path = "Assets/Plugins/MistralAI/Resources";
+            string path = "Assets/MistralAI/Resources";
             if (!AssetDatabase.IsValidFolder(path))
             {
                 AssetDatabase.CreateFolder("Assets/Plugins/MistralAI", "Resources");
