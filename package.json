@@ -1,6 +1,6 @@
 {
     "name": "com.unity.mistral-ai",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "displayName": "Mistral AI",
     "description": "This project is designed to simplify Unity's interaction with the Mistral AI API. After setting up the API Key and URL, you can access Mistral from your scripts.",
     "unity": "2019.1",
@@ -11,8 +11,8 @@
     "samples": [
     {
         "displayName": "Mistral AI Chat Example",
-      "description": "An example demonstrating how to use Mistral AI in a Unity project.",
-      "path": "Example~/Mistral AI Chat Example"
+        "description": "An example demonstrating how to use Mistral AI in a Unity project.",
+        "path": "Example~/Mistral AI Chat Example"
     }
     ],
     "author": {

@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
@@ -30,10 +31,11 @@ namespace Mistral.AI
 
     public static class MistralAIChat
     {
-        private static string history = "";
+        private static List<Message> history = new List<Message>();
         private static string currentResponse = "";
 
-        public static string GetHistory() => history;
+        public static string GetHistory() => string.Join("\n", history.ConvertAll(m => $"{m.GetRole()}: {m.GetContent()}"));
+
         public static string GetCurrentResponse() => currentResponse;
 
         public static void SendRequest(string request, MonoBehaviour monoBehaviour, bool writingUser = true)
@@ -42,18 +44,16 @@ namespace Mistral.AI
                 return;
 
             if (writingUser)
-                AppendChat($"\nYou: {request}\n");
+                history.Add(new Message("user", request));
 
             monoBehaviour.StartCoroutine(SendRequestEnumerator(request));
         }
 
-        private static void AppendChat(string message) => history += message;
-
         private static IEnumerator SendRequestEnumerator(string prompt)
         {
             currentResponse = "";
-            var messages = new Message[] { new Message("user", prompt) };
-            var requestData = new Request(GetModelName(), messages);
+            var messages = new List<Message>(history) { new Message("user", prompt) };
+            var requestData = new Request(GetModelName(), messages.ToArray());
             string jsonData = JsonConvert.SerializeObject(requestData);
 
             using (UnityWebRequest request = UnityWebRequest.PostWwwForm(Data.GetApiUrl(), "POST"))
@@ -73,18 +73,18 @@ namespace Mistral.AI
                     {
                         string reply = response.GetChoices()[0].GetMessage().GetContent();
                         currentResponse = reply;
-                        AppendChat($"\nAssistant: {reply}\n");
+                        history.Add(new Message("assistant", reply));
                     }
                     else
                     {
-                        AppendChat("Empty answer.\n");
+                        history.Add(new Message("assistant", "Empty answer."));
                     }
                 }
                 else
                 {
                     MistralLogger.LogError($"Error: {request.error}");
                     MistralLogger.LogError($"Server response: {request.downloadHandler.text}");
-                    AppendChat("Error receiving response.\n");
+                    history.Add(new Message("assistant", "Error receiving response."));
                 }
             }
         }

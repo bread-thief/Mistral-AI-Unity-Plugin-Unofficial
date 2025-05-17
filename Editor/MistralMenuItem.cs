@@ -196,5 +196,11 @@ public class MistralConfigurationWindow : EditorWindow
 public class MistralAIDocumentation : EditorWindow
 {
     [MenuItem("MistralAI/Documentation")]
-    public static void ShowWindow() => Application.OpenURL("https://docs.mistral.ai/");   
+    public static void ShowWindow() => Application.OpenURL("https://docs.mistral.ai/");
+}
+
+public class Autor : EditorWindow
+{
+    [MenuItem("MistralAI/Author")]
+    public static void ShowWindow() => Application.OpenURL("https://github.com/bread-thief/");   
 }
