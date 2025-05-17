@@ -7,14 +7,13 @@
     "dependencies": {
         "com.unity.nuget.newtonsoft-json": "3.0.2",
         "com.unity.textmeshpro": "3.0.6"
-
     },
     "samples": [
-        {
-            "displayName": "Mistral AI Chat Example",
-            "description": "",
-            "path": "Example~/Mistral AI Chat Example"
-        }
+    {
+        "displayName": "Mistral AI Chat Example",
+      "description": "An example demonstrating how to use Mistral AI in a Unity project.",
+      "path": "Example~/Mistral AI Chat Example"
+    }
     ],
     "author": {
         "name": "Bread Thief",
