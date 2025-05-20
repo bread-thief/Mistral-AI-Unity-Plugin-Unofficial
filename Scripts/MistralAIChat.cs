@@ -28,7 +28,6 @@ namespace Mistral.AI
             return settings != null ? settings.Model : ModelType.MistralNemo;
         }
     }
-
     public static class MistralAIChat
     {
         private static List<Message> history = new List<Message>();
@@ -44,7 +43,7 @@ namespace Mistral.AI
                 return;
 
             if (writingUser)
-                history.Add(new Message("User", request));
+                history.Add(new Message("user", request));
 
             monoBehaviour.StartCoroutine(SendRequestEnumerator(request, Data.GetApiKey(), Data.GetApiUrl(), Data.GetModelType()));
         }
@@ -52,9 +51,12 @@ namespace Mistral.AI
         private static IEnumerator SendRequestEnumerator(string prompt, string apiKey, string apiUrl, ModelType modelType)
         {
             currentResponse = "";
-            var messages = new List<Message>(history) { new Message("User", prompt) };
+            var messages = new List<Message>(history) { new Message("user", prompt) };
             var requestData = new Request(GetModelName(modelType), messages.ToArray());
             string jsonData = JsonConvert.SerializeObject(requestData);
+
+            Debug.Log($"API Key: {apiKey}");
+            Debug.Log($"API URL: {apiUrl}");
 
             using (UnityWebRequest request = UnityWebRequest.PostWwwForm(apiUrl, "POST"))
             {
@@ -63,6 +65,9 @@ namespace Mistral.AI
                 request.downloadHandler = new DownloadHandlerBuffer();
                 request.SetRequestHeader("Content-Type", "application/json");
                 request.SetRequestHeader("Authorization", $"Bearer {apiKey}");
+
+                Debug.Log($"Authorization Header: {request.GetRequestHeader("Authorization")}");
+
                 yield return request.SendWebRequest();
 
                 if (request.result == UnityWebRequest.Result.Success)
@@ -73,18 +78,18 @@ namespace Mistral.AI
                     {
                         string reply = response.GetChoices()[0].GetMessage().GetContent();
                         currentResponse = reply;
-                        history.Add(new Message("Assistant", reply));
+                        history.Add(new Message("assistant", reply));
                     }
                     else
                     {
-                        history.Add(new Message("Assistant", "Empty answer."));
+                        history.Add(new Message("assistant", "Empty answer."));
                     }
                 }
                 else
                 {
                     MistralLogger.LogError($"Error: {request.error}");
                     MistralLogger.LogError($"Server response: {request.downloadHandler.text}");
-                    history.Add(new Message("Assistant", "Error receiving response."));
+                    history.Add(new Message("assistant", "Error receiving response."));
                 }
             }
         }
@@ -100,7 +105,6 @@ namespace Mistral.AI
             };
         }
     }
-
     namespace Components
     {
         public class Request
