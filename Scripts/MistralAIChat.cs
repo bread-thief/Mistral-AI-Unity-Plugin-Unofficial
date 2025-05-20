@@ -34,17 +34,42 @@ namespace Mistral.AI
         private static List<Message> history = new List<Message>();
         private static string currentResponse = "";
 
+        // =============================================
+        // Function
+        // =============================================
+        #region Function
         public static string GetHistory() => string.Join("\n", history.ConvertAll(m => $"\n{m.GetRole()}: {m.GetContent()}\n"));
-
+        public static void ClearHistory() => history.Clear();
+        public static int GetHistoryCount() => history.Count;
+        public static Message GetMessageAt(int index)
+        {
+            if (index >= 0 && index < history.Count)
+                return history[index];
+            return null;
+        }
         public static string GetCurrentResponse() => currentResponse;
+        #endregion
 
+        // =============================================
+        // Request Metods
+        // =============================================
+        #region Request Methods
+        public static void SendRequest(string request, MonoBehaviour monoBehaviour) => SendRequestHandler(request, monoBehaviour, Data.GetApiKey(), Data.GetApiUrl(), Data.GetModelType());
 
-        public static void SendRequest(string request, MonoBehaviour monoBehaviour)
+        public static void SendRequest(string request, MonoBehaviour monoBehaviour, string apiKey) => SendRequestHandler(request, monoBehaviour, apiKey, Data.GetApiUrl(), Data.GetModelType());
+
+        public static void SendRequest(string request, MonoBehaviour monoBehaviour, string apiKey, ModelType modelType) => SendRequestHandler(request, monoBehaviour, apiKey, Data.GetApiUrl(), modelType);
+
+        public static void SendRequest(string request, MonoBehaviour monoBehaviour, ModelType modelType) => SendRequestHandler(request, monoBehaviour, Data.GetApiKey(), Data.GetApiUrl(), modelType);
+
+        public static void SendRequest(string request, MonoBehaviour monoBehaviour, string apiKey, string apiUrl, ModelType modelType) => SendRequestHandler(request, monoBehaviour, apiKey, apiUrl, modelType);
+
+        private static void SendRequestHandler(string request, MonoBehaviour monoBehaviour, string apiKey, string apiUrl, ModelType modelType)
         {
             if (string.IsNullOrEmpty(request))
                 return;
             history.Add(new Message("User", request));
-            monoBehaviour.StartCoroutine(SendRequestEnumerator(request, Data.GetApiKey(), Data.GetApiUrl(), Data.GetModelType()));
+            monoBehaviour.StartCoroutine(SendRequestEnumerator(request, apiKey, apiUrl, modelType));
         }
 
         private static IEnumerator SendRequestEnumerator(string prompt, string apiKey, string apiUrl, ModelType modelType)
@@ -86,7 +111,12 @@ namespace Mistral.AI
                 }
             }
         }
+        #endregion
 
+        // =============================================
+        // Add Metods
+        // =============================================
+        #region Add Methods
         private static string GetModelName(ModelType modelType)
         {
             return modelType switch
@@ -97,6 +127,7 @@ namespace Mistral.AI
                 _ => "error",
             };
         }
+        #endregion
     }
 
     namespace Components
