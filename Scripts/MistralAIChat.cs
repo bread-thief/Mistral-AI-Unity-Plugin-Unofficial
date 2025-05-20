@@ -40,29 +40,17 @@ namespace Mistral.AI
 
         public static void SendRequest(string request, MonoBehaviour monoBehaviour)
         {
-            if (string.IsNullOrEmpty(request))
-                return;
-
-            monoBehaviour.StartCoroutine(SendRequestEnumerator(request, Data.GetApiKey(), Data.GetApiUrl(), Data.GetModelType(), false));
+            SendRequest(request, monoBehaviour, true, Data.GetApiKey(), Data.GetApiUrl(), Data.GetModelType());
         }
 
         public static void SendRequest(string request, MonoBehaviour monoBehaviour, bool writingUser)
         {
-            if (string.IsNullOrEmpty(request))
-                return;
-
-            if (writingUser)
-                history.Add(new Message("User", request));
-
-            monoBehaviour.StartCoroutine(SendRequestEnumerator(request, Data.GetApiKey(), Data.GetApiUrl(), Data.GetModelType(), writingUser));
+            SendRequest(request, monoBehaviour, writingUser, Data.GetApiKey(), Data.GetApiUrl(), Data.GetModelType());
         }
 
         public static void SendRequest(string request, MonoBehaviour monoBehaviour, string apiKey, string apiUrl, ModelType modelType)
         {
-            if (string.IsNullOrEmpty(request))
-                return;
-
-            monoBehaviour.StartCoroutine(SendRequestEnumerator(request, apiKey, apiUrl, modelType, false));
+            SendRequest(request, monoBehaviour, true, apiKey, apiUrl, modelType);
         }
 
         public static void SendRequest(string request, MonoBehaviour monoBehaviour, bool writingUser, string apiKey, string apiUrl, ModelType modelType)
@@ -71,15 +59,15 @@ namespace Mistral.AI
                 return;
 
             if (writingUser)
-                history.Add(new Message("User", request));
+                history.Add(new Message("user", request));
 
-            monoBehaviour.StartCoroutine(SendRequestEnumerator(request, apiKey, apiUrl, modelType, writingUser));
+            monoBehaviour.StartCoroutine(SendRequestEnumerator(request, apiKey, apiUrl, modelType));
         }
 
-        private static IEnumerator SendRequestEnumerator(string prompt, string apiKey, string apiUrl, ModelType modelType, bool writingUser)
+        private static IEnumerator SendRequestEnumerator(string prompt, string apiKey, string apiUrl, ModelType modelType)
         {
             currentResponse = "";
-            var messages = new List<Message>(history) { new Message("User", prompt) };
+            var messages = new List<Message>(history) { new Message("user", prompt) };
             var requestData = new Request(GetModelName(modelType), messages.ToArray());
             string jsonData = JsonConvert.SerializeObject(requestData);
 
@@ -100,18 +88,18 @@ namespace Mistral.AI
                     {
                         string reply = response.GetChoices()[0].GetMessage().GetContent();
                         currentResponse = reply;
-                        history.Add(new Message("Assistant", reply));
+                        history.Add(new Message("assistant", reply));
                     }
                     else
                     {
-                        history.Add(new Message("Assistant", "Empty answer."));
+                        history.Add(new Message("assistant", "Empty answer."));
                     }
                 }
                 else
                 {
                     MistralLogger.LogError($"Error: {request.error}");
                     MistralLogger.LogError($"Server response: {request.downloadHandler.text}");
-                    history.Add(new Message("Assistant", "Error receiving response."));
+                    history.Add(new Message("assistant", "Error receiving response."));
                 }
             }
         }
@@ -125,6 +113,23 @@ namespace Mistral.AI
                 ModelType.CodestralMamba => "open-codestral-mamba",
                 _ => "error",
             };
+        }
+
+        public static void ClearHistory()
+        {
+            history.Clear();
+        }
+
+        public static int GetHistoryCount()
+        {
+            return history.Count;
+        }
+
+        public static Message GetMessageAt(int index)
+        {
+            if (index >= 0 && index < history.Count)
+                return history[index];
+            return null;
         }
     }
 
