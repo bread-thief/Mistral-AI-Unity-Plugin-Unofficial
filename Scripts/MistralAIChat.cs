@@ -32,33 +32,27 @@ namespace Mistral.AI
     public static class MistralAIChat
     {
         private static List<Message> history = new List<Message>();
-        private static string currentReply = "";
+        private static string currentResponse = "";
 
         public static string GetHistory() => string.Join("\n", history.ConvertAll(m => $"\n{m.GetRole()}: {m.GetContent()}\n"));
 
-        public static string GetCurrentReply() => currentReply;
+        public static string GetCurrentResponse() => currentResponse;
 
-        public static void SendRequest(string request, MonoBehaviour monoBehaviour) => SendRequestHandler(request, monoBehaviour, Data.GetApiKey(), Data.GetApiUrl(), Data.GetModelType());
 
-        public static void SendRequest(string request, MonoBehaviour monoBehaviour, string apiKey, string apiUrl, ModelType model) => SendRequestHandler(request, monoBehaviour, apiKey, apiUrl, model);
-
-        private static void SendRequestHandler(string request, MonoBehaviour monoBehaviour, string apiKey, string apiUrl, ModelType model)
+        public static void SendRequest(string request, MonoBehaviour monoBehaviour)
         {
             if (string.IsNullOrEmpty(request))
                 return;
-
             history.Add(new Message("User", request));
-            monoBehaviour.StartCoroutine(SendRequestEnumerator(request, apiKey, apiUrl, model));
+            monoBehaviour.StartCoroutine(SendRequestEnumerator(request, Data.GetApiKey(), Data.GetApiUrl(), Data.GetModelType()));
         }
 
         private static IEnumerator SendRequestEnumerator(string prompt, string apiKey, string apiUrl, ModelType modelType)
         {
-            currentReply = "";
+            currentResponse = "";
             var messages = new List<Message>(history) { new Message("User", prompt) };
             var requestData = new Request(GetModelName(modelType), messages.ToArray());
             string jsonData = JsonConvert.SerializeObject(requestData);
-
-            MistralLogger.Log($"Request JSON: {jsonData}");
 
             using (UnityWebRequest request = UnityWebRequest.PostWwwForm(apiUrl, "POST"))
             {
@@ -67,9 +61,6 @@ namespace Mistral.AI
                 request.downloadHandler = new DownloadHandlerBuffer();
                 request.SetRequestHeader("Content-Type", "application/json");
                 request.SetRequestHeader("Authorization", $"Bearer {apiKey}");
-
-                MistralLogger.Log($"Authorization Header: {request.GetRequestHeader("Authorization")}");
-
                 yield return request.SendWebRequest();
 
                 if (request.result == UnityWebRequest.Result.Success)
@@ -79,7 +70,7 @@ namespace Mistral.AI
                     if (response?.GetChoices() != null && response.GetChoices().Length > 0)
                     {
                         string reply = response.GetChoices()[0].GetMessage().GetContent();
-                        currentReply = reply;
+                        currentResponse = reply;
                         history.Add(new Message("Assistant", reply));
                     }
                     else
@@ -91,11 +82,10 @@ namespace Mistral.AI
                 {
                     MistralLogger.LogError($"Error: {request.error}");
                     MistralLogger.LogError($"Server response: {request.downloadHandler.text}");
-                    history.Add(new Message("assistant", "Error receiving response."));
+                    history.Add(new Message("Assistant", "Error receiving response."));
                 }
             }
         }
-
 
         private static string GetModelName(ModelType modelType)
         {
