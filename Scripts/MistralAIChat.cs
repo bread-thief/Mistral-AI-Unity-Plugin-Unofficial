@@ -38,36 +38,21 @@ namespace Mistral.AI
 
         public static string GetCurrentResponse() => currentResponse;
 
-        public static void SendRequest(string request, MonoBehaviour monoBehaviour)
-        {
-            SendRequest(request, monoBehaviour, true, Data.GetApiKey(), Data.GetApiUrl(), Data.GetModelType());
-        }
-
         public static void SendRequest(string request, MonoBehaviour monoBehaviour, bool writingUser)
-        {
-            SendRequest(request, monoBehaviour, writingUser, Data.GetApiKey(), Data.GetApiUrl(), Data.GetModelType());
-        }
-
-        public static void SendRequest(string request, MonoBehaviour monoBehaviour, string apiKey, string apiUrl, ModelType modelType)
-        {
-            SendRequest(request, monoBehaviour, true, apiKey, apiUrl, modelType);
-        }
-
-        public static void SendRequest(string request, MonoBehaviour monoBehaviour, bool writingUser, string apiKey, string apiUrl, ModelType modelType)
         {
             if (string.IsNullOrEmpty(request))
                 return;
 
             if (writingUser)
-                history.Add(new Message("user", request));
+                history.Add(new Message("User", request));
 
-            monoBehaviour.StartCoroutine(SendRequestEnumerator(request, apiKey, apiUrl, modelType));
+            monoBehaviour.StartCoroutine(SendRequestEnumerator(request, Data.GetApiKey(), Data.GetApiUrl(), Data.GetModelType()));
         }
 
         private static IEnumerator SendRequestEnumerator(string prompt, string apiKey, string apiUrl, ModelType modelType)
         {
             currentResponse = "";
-            var messages = new List<Message>(history) { new Message("user", prompt) };
+            var messages = new List<Message>(history) { new Message("User", prompt) };
             var requestData = new Request(GetModelName(modelType), messages.ToArray());
             string jsonData = JsonConvert.SerializeObject(requestData);
 
@@ -88,18 +73,18 @@ namespace Mistral.AI
                     {
                         string reply = response.GetChoices()[0].GetMessage().GetContent();
                         currentResponse = reply;
-                        history.Add(new Message("assistant", reply));
+                        history.Add(new Message("Assistant", reply));
                     }
                     else
                     {
-                        history.Add(new Message("assistant", "Empty answer."));
+                        history.Add(new Message("Assistant", "Empty answer."));
                     }
                 }
                 else
                 {
                     MistralLogger.LogError($"Error: {request.error}");
                     MistralLogger.LogError($"Server response: {request.downloadHandler.text}");
-                    history.Add(new Message("assistant", "Error receiving response."));
+                    history.Add(new Message("Assistant", "Error receiving response."));
                 }
             }
         }
@@ -113,23 +98,6 @@ namespace Mistral.AI
                 ModelType.CodestralMamba => "open-codestral-mamba",
                 _ => "error",
             };
-        }
-
-        public static void ClearHistory()
-        {
-            history.Clear();
-        }
-
-        public static int GetHistoryCount()
-        {
-            return history.Count;
-        }
-
-        public static Message GetMessageAt(int index)
-        {
-            if (index >= 0 && index < history.Count)
-                return history[index];
-            return null;
         }
     }
 
