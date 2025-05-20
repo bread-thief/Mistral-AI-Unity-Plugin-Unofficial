@@ -99,9 +99,7 @@ namespace Mistral.AI
                         history.Add(new Message("assistant", reply));
                     }
                     else
-                    {
                         history.Add(new Message("assistant", "Empty answer."));
-                    }
                 }
                 else
                 {

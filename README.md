@@ -85,7 +85,7 @@ public class UsagePlugin : MonoBehaviour
 { 
     private void Start() 
     { 
-        MistralAIChat.SendRequest("Hello! 2+2=?", this, true); 
+        MistralAIChat.SendRequest("Hello! 2+2=?", this); 
         string request = MistralAIChat.GetCurrentResponse(); 
     }
 }

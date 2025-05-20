@@ -158,10 +158,7 @@ public class MistralConfigurationWindow : EditorWindow
             GUI.DrawTexture(bannerRect, bannerTexture, ScaleMode.ScaleToFit);
             GUILayout.Space(bannerHeight + 10);
             if (settings == null)
-            {
-                EditorGUILayout.LabelField("Settings asset not found or created.");
                 return;
-            }
             GUIStyle centeredStyle = new GUIStyle(EditorStyles.whiteLargeLabel);
             centeredStyle.alignment = TextAnchor.MiddleCenter;
             GUILayout.Label("Mistral API Settings", centeredStyle);
