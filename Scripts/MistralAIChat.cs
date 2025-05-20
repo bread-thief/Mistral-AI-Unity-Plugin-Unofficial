@@ -34,35 +34,62 @@ namespace Mistral.AI
         private static List<Message> history = new List<Message>();
         private static string currentResponse = "";
 
-        public static string GetHistory() => string.Join("\n", history.ConvertAll(m => $"{m.GetRole()}: {m.GetContent()}"));
+        public static string GetHistory() => string.Join("\n", history.ConvertAll(m => $"\n{m.GetRole()}: {m.GetContent()}\n"));
 
         public static string GetCurrentResponse() => currentResponse;
 
-        public static void SendRequest(string request, MonoBehaviour monoBehaviour, bool writingUser = true)
+        public static void SendRequest(string request, MonoBehaviour monoBehaviour)
+        {
+            if (string.IsNullOrEmpty(request))
+                return;
+
+            monoBehaviour.StartCoroutine(SendRequestEnumerator(request, Data.GetApiKey(), Data.GetApiUrl(), Data.GetModelType(), false));
+        }
+
+        public static void SendRequest(string request, MonoBehaviour monoBehaviour, bool writingUser)
         {
             if (string.IsNullOrEmpty(request))
                 return;
 
             if (writingUser)
-                history.Add(new Message("user", request));
+                history.Add(new Message("User", request));
 
-            monoBehaviour.StartCoroutine(SendRequestEnumerator(request));
+            monoBehaviour.StartCoroutine(SendRequestEnumerator(request, Data.GetApiKey(), Data.GetApiUrl(), Data.GetModelType(), writingUser));
         }
 
-        private static IEnumerator SendRequestEnumerator(string prompt)
+        public static void SendRequest(string request, MonoBehaviour monoBehaviour, string apiKey, string apiUrl, ModelType modelType)
+        {
+            if (string.IsNullOrEmpty(request))
+                return;
+
+            monoBehaviour.StartCoroutine(SendRequestEnumerator(request, apiKey, apiUrl, modelType, false));
+        }
+
+        public static void SendRequest(string request, MonoBehaviour monoBehaviour, bool writingUser, string apiKey, string apiUrl, ModelType modelType)
+        {
+            if (string.IsNullOrEmpty(request))
+                return;
+
+            if (writingUser)
+                history.Add(new Message("User", request));
+
+            monoBehaviour.StartCoroutine(SendRequestEnumerator(request, apiKey, apiUrl, modelType, writingUser));
+        }
+
+        private static IEnumerator SendRequestEnumerator(string prompt, string apiKey, string apiUrl, ModelType modelType, bool writingUser)
         {
             currentResponse = "";
-            var messages = new List<Message>(history) { new Message("user", prompt) };
-            var requestData = new Request(GetModelName(), messages.ToArray());
+            var messages = new List<Message>(history) { new Message("User", prompt) };
+            var requestData = new Request(GetModelName(modelType), messages.ToArray());
             string jsonData = JsonConvert.SerializeObject(requestData);
 
-            using (UnityWebRequest request = UnityWebRequest.PostWwwForm(Data.GetApiUrl(), "POST"))
+            using (UnityWebRequest request = UnityWebRequest.PostWwwForm(apiUrl, "POST"))
             {
                 byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
                 request.uploadHandler = new UploadHandlerRaw(bodyRaw);
                 request.downloadHandler = new DownloadHandlerBuffer();
                 request.SetRequestHeader("Content-Type", "application/json");
-                request.SetRequestHeader("Authorization", $"Bearer {Data.GetApiKey()}");
+                request.SetRequestHeader("Authorization", $"Bearer {apiKey}");
                 yield return request.SendWebRequest();
 
                 if (request.result == UnityWebRequest.Result.Success)
@@ -73,25 +100,25 @@ namespace Mistral.AI
                     {
                         string reply = response.GetChoices()[0].GetMessage().GetContent();
                         currentResponse = reply;
-                        history.Add(new Message("assistant", reply));
+                        history.Add(new Message("Assistant", reply));
                     }
                     else
                     {
-                        history.Add(new Message("assistant", "Empty answer."));
+                        history.Add(new Message("Assistant", "Empty answer."));
                     }
                 }
                 else
                 {
                     MistralLogger.LogError($"Error: {request.error}");
                     MistralLogger.LogError($"Server response: {request.downloadHandler.text}");
-                    history.Add(new Message("assistant", "Error receiving response."));
+                    history.Add(new Message("Assistant", "Error receiving response."));
                 }
             }
         }
 
-        private static string GetModelName()
+        private static string GetModelName(ModelType modelType)
         {
-            return Data.GetModelType() switch
+            return modelType switch
             {
                 ModelType.MistralNemo => "open-mistral-nemo",
                 ModelType.MistralSmall => "mistral-small-latest",
