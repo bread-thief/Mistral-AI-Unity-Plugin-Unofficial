@@ -37,7 +37,7 @@ namespace Mistral.AI
         public static string GetHistory() => string.Join("\n", history.ConvertAll(m => $"\n{m.GetRole()}: {m.GetContent()}\n"));
 
         public static string GetCurrentReply() => currentReply;
-        
+
         public static void SendRequest(string request, MonoBehaviour monoBehaviour) => SendRequestHandler(request, monoBehaviour, Data.GetApiKey(), Data.GetApiUrl(), Data.GetModelType());
 
         public static void SendRequest(string request, MonoBehaviour monoBehaviour, string apiKey, string apiUrl, ModelType model) => SendRequestHandler(request, monoBehaviour, apiKey, apiUrl, model);
@@ -52,49 +52,49 @@ namespace Mistral.AI
         }
 
         private static IEnumerator SendRequestEnumerator(string prompt, string apiKey, string apiUrl, ModelType modelType)
-{
-    currentReply = "";
-    var messages = new List<Message>(history) { new Message("User", prompt) };
-    var requestData = new Request(GetModelName(modelType), messages.ToArray());
-    string jsonData = JsonConvert.SerializeObject(requestData);
-
-    Debug.Log($"Request JSON: {jsonData}"); // Debug log for request JSON
-
-    using (UnityWebRequest request = UnityWebRequest.PostWwwForm(apiUrl, "POST"))
-    {
-        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
-        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-        request.downloadHandler = new DownloadHandlerBuffer();
-        request.SetRequestHeader("Content-Type", "application/json");
-        request.SetRequestHeader("Authorization", $"Bearer {apiKey}");
-
-        Debug.Log($"Authorization Header: {request.GetRequestHeader("Authorization")}"); // Debug log for Authorization header
-
-        yield return request.SendWebRequest();
-
-        if (request.result == UnityWebRequest.Result.Success)
         {
-            string responseJson = request.downloadHandler.text;
-            var response = JsonConvert.DeserializeObject<Response>(responseJson);
-            if (response?.GetChoices() != null && response.GetChoices().Length > 0)
+            currentReply = "";
+            var messages = new List<Message>(history) { new Message("User", prompt) };
+            var requestData = new Request(GetModelName(modelType), messages.ToArray());
+            string jsonData = JsonConvert.SerializeObject(requestData);
+
+            MistralLogger.Log($"Request JSON: {jsonData}");
+
+            using (UnityWebRequest request = UnityWebRequest.PostWwwForm(apiUrl, "POST"))
             {
-                string reply = response.GetChoices()[0].GetMessage().GetContent();
-                currentReply = reply;
-                history.Add(new Message("Assistant", reply));
-            }
-            else
-            {
-                history.Add(new Message("Assistant", "Empty answer."));
+                byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
+                request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                request.downloadHandler = new DownloadHandlerBuffer();
+                request.SetRequestHeader("Content-Type", "application/json");
+                request.SetRequestHeader("Authorization", $"Bearer {apiKey}");
+
+                MistralLogger.Log($"Authorization Header: {request.GetRequestHeader("Authorization")}");
+
+                yield return request.SendWebRequest();
+
+                if (request.result == UnityWebRequest.Result.Success)
+                {
+                    string responseJson = request.downloadHandler.text;
+                    var response = JsonConvert.DeserializeObject<Response>(responseJson);
+                    if (response?.GetChoices() != null && response.GetChoices().Length > 0)
+                    {
+                        string reply = response.GetChoices()[0].GetMessage().GetContent();
+                        currentReply = reply;
+                        history.Add(new Message("Assistant", reply));
+                    }
+                    else
+                    {
+                        history.Add(new Message("Assistant", "Empty answer."));
+                    }
+                }
+                else
+                {
+                    MistralLogger.LogError($"Error: {request.error}");
+                    MistralLogger.LogError($"Server response: {request.downloadHandler.text}");
+                    history.Add(new Message("assistant", "Error receiving response."));
+                }
             }
         }
-        else
-        {
-            MistralLogger.LogError($"Error: {request.error}");
-            MistralLogger.LogError($"Server response: {request.downloadHandler.text}");
-            history.Add(new Message("assistant", "Error receiving response."));
-        }
-    }
-}
 
 
         private static string GetModelName(ModelType modelType)

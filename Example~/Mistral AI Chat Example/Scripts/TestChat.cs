@@ -9,10 +9,7 @@ public class TestChat : MonoBehaviour
     [SerializeField] private TMP_InputField chatHistoryInputField;
     [SerializeField] private Button sendButton;
 
-    private void Start()
-    {
-        sendButton.onClick.AddListener(OnButtonClick);
-    }
+    private void Start() => sendButton.onClick.AddListener(OnButtonClick);
 
     private void OnButtonClick()
     {
