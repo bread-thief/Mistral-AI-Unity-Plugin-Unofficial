@@ -18,7 +18,7 @@ public class TestChat : MonoBehaviour
     {
         if (!string.IsNullOrEmpty(userInputField.text))
         {
-            MistralAIChat.SendRequest(userInputField.text, this, true);
+            MistralAIChat.SendRequest(userInputField.text, this);
             userInputField.text = "";
         }
     }
