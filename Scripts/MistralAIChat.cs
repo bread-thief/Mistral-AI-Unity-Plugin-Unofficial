@@ -68,14 +68,14 @@ namespace Mistral.AI
         {
             if (string.IsNullOrEmpty(request))
                 return;
-            history.Add(new Message("User", request));
+            history.Add(new Message("user", request));
             monoBehaviour.StartCoroutine(SendRequestEnumerator(request, apiKey, apiUrl, modelType));
         }
 
         private static IEnumerator SendRequestEnumerator(string prompt, string apiKey, string apiUrl, ModelType modelType)
         {
             currentResponse = "";
-            var messages = new List<Message>(history) { new Message("User", prompt) };
+            var messages = new List<Message>(history) { new Message("user", prompt) };
             var requestData = new Request(GetModelName(modelType), messages.ToArray());
             string jsonData = JsonConvert.SerializeObject(requestData);
 
@@ -96,27 +96,22 @@ namespace Mistral.AI
                     {
                         string reply = response.GetChoices()[0].GetMessage().GetContent();
                         currentResponse = reply;
-                        history.Add(new Message("Assistant", reply));
+                        history.Add(new Message("assistant", reply));
                     }
                     else
                     {
-                        history.Add(new Message("Assistant", "Empty answer."));
+                        history.Add(new Message("assistant", "Empty answer."));
                     }
                 }
                 else
                 {
                     MistralLogger.LogError($"Error: {request.error}");
                     MistralLogger.LogError($"Server response: {request.downloadHandler.text}");
-                    history.Add(new Message("Assistant", "Error receiving response."));
+                    history.Add(new Message("assistant", "Error receiving response."));
                 }
             }
         }
-        #endregion
 
-        // =============================================
-        // Add Metods
-        // =============================================
-        #region Add Methods
         private static string GetModelName(ModelType modelType)
         {
             return modelType switch
