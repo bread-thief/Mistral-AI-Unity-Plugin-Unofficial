@@ -354,6 +354,22 @@ namespace Mistral.AI
         /// Records the timestamp of a message sent or received.
         /// </summary>
         private static void AddMessageTimestamp() => messageTimestamps.Add(Time.time);
+
+        /// <summary>
+        /// Converts a ModelType enum value to the corresponding model name string used by the API.
+        /// </summary>
+        /// <param name="modelType">The ModelType enum value.</param>
+        /// <returns>The string name of the model for API requests.</returns>
+        private static string GetModelName(ModelType modelType)
+        {
+            return modelType switch
+            {
+                ModelType.MistralNemo => "open-mistral-nemo",
+                ModelType.MistralSmall => "mistral-small-latest",
+                ModelType.CodestralMamba => "open-codestral-mamba",
+                _ => "error",
+            };
+        }
         #endregion
     }
 
