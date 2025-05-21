@@ -277,35 +277,16 @@ namespace Mistral.AI
         /// <param name="modelType">The model type to use for the request.</param>
         public static void SendRequest(string request, MonoBehaviour monoBehaviour, ModelType modelType) => SendRequestHandler(request, monoBehaviour, Data.GetApiKey(), Data.GetApiUrl(), modelType);
 
-        /// <summary>
-        /// The core method that handles sending the request with all parameters specified.
-        /// Initiates the coroutine to perform the web request.
-        /// </summary>
-        /// <param name="request">The user input message.</param>
-        /// <param name="monoBehaviour">The MonoBehaviour to start the coroutine.</param>
-        /// <param name="apiKey">API key for authorization.</param>
-        /// <param name="apiUrl">API URL endpoint.</param>
-        /// <param name="modelType">Model type to specify which AI model to use.</param>
         private static void SendRequestHandler(string request, MonoBehaviour monoBehaviour, string apiKey, string apiUrl, ModelType modelType)
         {
             if (string.IsNullOrEmpty(request))
                 return;
-            // Add the user message to history
             history.Add(new Message("user", request));
-            // Start the coroutine to send the request and handle response
             monoBehaviour.StartCoroutine(SendRequestEnumerator(request, apiKey, apiUrl, modelType));
             AddMessageTimestamp();
             hasResponded = false;
         }
 
-        /// <summary>
-        /// Coroutine that manages sending the web request and processing the response asynchronously.
-        /// </summary>
-        /// <param name="prompt">The user input prompt.</param>
-        /// <param name="apiKey">API key for authorization.</param>
-        /// <param name="apiUrl">API URL endpoint.</param>
-        /// <param name="modelType">Model type to specify which AI model to use.</param>
-        /// <returns>An IEnumerator for coroutine execution.</returns>
         private static IEnumerator SendRequestEnumerator(string prompt, string apiKey, string apiUrl, ModelType modelType)
         {
             currentResponse = "";
@@ -350,16 +331,8 @@ namespace Mistral.AI
             }
         }
 
-        /// <summary>
-        /// Records the timestamp of a message sent or received.
-        /// </summary>
         private static void AddMessageTimestamp() => messageTimestamps.Add(Time.time);
 
-        /// <summary>
-        /// Converts a ModelType enum value to the corresponding model name string used by the API.
-        /// </summary>
-        /// <param name="modelType">The ModelType enum value.</param>
-        /// <returns>The string name of the model for API requests.</returns>
         private static string GetModelName(ModelType modelType)
         {
             return modelType switch
