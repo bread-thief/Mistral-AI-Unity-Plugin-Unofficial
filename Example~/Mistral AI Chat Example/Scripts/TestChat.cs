@@ -20,7 +20,7 @@ public class TestChat : MonoBehaviour
     private void OnButtonClick()
     {
         string message = userInputField.text;
-        if (!string.IsNullOrEmpty(message))
+        if (!string.IsNullOrEmpty(message) || !MistralAIChat.GetHasResponded())
         {
             MistralAIChat.SendRequest(message, this);
             userInputField.text = null;
