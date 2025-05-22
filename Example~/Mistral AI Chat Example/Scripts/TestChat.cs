@@ -9,14 +9,18 @@ public class TestChat : MonoBehaviour
     [SerializeField] private TMP_InputField chatHistoryInputField;
     [SerializeField] private Button sendButton;
 
-    private void Start() => sendButton.onClick.AddListener(OnButtonClick);
+    private void Start()
+    {
+        userInputField.onEndEdit.AddListener(OnButtonClick);
+        sendButton.onClick.AddListener(OnButtonClick);
+    }
 
     private void OnButtonClick()
     {
         if (!string.IsNullOrEmpty(userInputField.text))
         {
             MistralAIChat.SendRequest(userInputField.text, this);
-            userInputField.text = "";
+            userInputField.text = null;
         }
     }
 
