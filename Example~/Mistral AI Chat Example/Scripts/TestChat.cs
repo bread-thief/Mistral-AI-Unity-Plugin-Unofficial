@@ -11,16 +11,20 @@ public class TestChat : MonoBehaviour
 
     private void Start()
     {
-        userInputField.onEndEdit.AddListener(OnButtonClick);
+        userInputField.onSubmit.AddListener(OnSubmitInputField);
         sendButton.onClick.AddListener(OnButtonClick);
     }
 
+    private void OnSubmitInputField(string text) => OnButtonClick();
+
     private void OnButtonClick()
     {
-        if (!string.IsNullOrEmpty(userInputField.text))
+        string message = userInputField.text;
+        if (!string.IsNullOrEmpty(message))
         {
-            MistralAIChat.SendRequest(userInputField.text, this);
+            MistralAIChat.SendRequest(message, this);
             userInputField.text = null;
+            userInputField.ActivateInputField();
         }
     }
 
