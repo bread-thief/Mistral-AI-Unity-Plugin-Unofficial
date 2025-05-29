@@ -32,7 +32,7 @@ This project is designed to simplify Unity's interaction with the Mistral AI API
 1. **Install NuGet**
 - Copy the link or do it in the [**NuGetForUnity**](https://github.com/GlitchEnzo/NuGetForUnity) repository.
 ~~~
-https://github.com/GlitchEnzo/NuGetForUnity.git
+https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity
 ~~~
 - In Unity, go to `Window > Package Manager`:
 
