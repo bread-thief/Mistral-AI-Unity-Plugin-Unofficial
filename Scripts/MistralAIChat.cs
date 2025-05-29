@@ -16,8 +16,13 @@ namespace Mistral.AI
         /// <returns>The API key as a string, or an empty string if not set.</returns>
         public static string GetApiKey()
         {
+#if UNITY_EDITOR
+            MistralConfigurationWindow.ShowConfigurationWindow();
             var settings = MistralConfigurationWindow.GetSettings();
             return settings != null && !string.IsNullOrEmpty(settings.ApiKey) ? settings.ApiKey : "";
+#else
+            return "";
+#endif
         }
 
         /// <summary>
@@ -26,8 +31,13 @@ namespace Mistral.AI
         /// <returns>The API URL as a string, or an empty string if not set.</returns>
         public static string GetApiUrl()
         {
+#if UNITY_EDITOR
+            MistralConfigurationWindow.ShowConfigurationWindow();
             var settings = MistralConfigurationWindow.GetSettings();
             return settings != null && !string.IsNullOrEmpty(settings.ApiUrl) ? settings.ApiUrl : "";
+#else
+            return "https://api.mistral.ai/v1/chat/completions";
+#endif
         }
 
         /// <summary>
@@ -36,8 +46,13 @@ namespace Mistral.AI
         /// <returns>The ModelType enum value.</returns>
         public static ModelType GetModelType()
         {
+#if UNITY_EDITOR
+            MistralConfigurationWindow.ShowConfigurationWindow();
             var settings = MistralConfigurationWindow.GetSettings();
             return settings != null ? settings.Model : ModelType.MistralNemo;
+#else
+            return ModelType.MistralNemo;
+#endif
         }
     }
 
@@ -47,10 +62,10 @@ namespace Mistral.AI
         // ==================Variables===================
         // ==============================================
         #region Variables
-        private static List<Message> history = new List<Message>();
-        private static string currentResponse = "";
-        private static List<float> messageTimestamps = new List<float>();
-        private static bool hasResponded = true;
+        private static List<Message> _history = new List<Message>();
+        private static string _currentResponse = "";
+        private static List<float> _messageTimestamps = new List<float>();
+        private static bool _hasResponded = true;
         #endregion
 
         // ==============================================
@@ -61,7 +76,7 @@ namespace Mistral.AI
         /// Checks if the AI has responded to the last request.
         /// </summary>
         /// <returns>True if the AI has responded; otherwise, false.</returns>
-        public static bool GetHasResponded() => hasResponded;
+        public static bool GetHasResponded() => _hasResponded;
 
         /// <summary>
         /// Sends a request to the AI using the last user message in the conversation history.
@@ -70,10 +85,10 @@ namespace Mistral.AI
         /// <param name="monoBehaviour">The MonoBehaviour to run the coroutine.</param>
         public static void ReplyToLastMessage(MonoBehaviour monoBehaviour)
         {
-            if (history.Count == 0 || !hasResponded)
+            if (_history.Count == 0 || !_hasResponded)
                 return;
 
-            string lastUserMessage = history[history.Count - 1].GetContent();
+            string lastUserMessage = _history[_history.Count - 1].GetContent();
             SendRequest(lastUserMessage, monoBehaviour);
         }
 
@@ -81,18 +96,18 @@ namespace Mistral.AI
         /// Gets the entire conversation history as a formatted string.
         /// </summary>
         /// <returns>A string containing the roles and contents of all messages.</returns>
-        public static string GetHistory() => string.Join("\n", history.ConvertAll(m => $"\n{m.GetRole()}: {m.GetContent()}\n"));
+        public static string GetHistory() => string.Join("\n", _history.ConvertAll(m => $"\n{m.GetRole()}: {m.GetContent()}\n"));
 
         /// <summary>
         /// Clears the current conversation history.
         /// </summary>
-        public static void ClearHistory() => history.Clear();
+        public static void ClearHistory() => _history.Clear();
 
         /// <summary>
         /// Gets the number of messages in the conversation history.
         /// </summary>
         /// <returns>The count of messages.</returns>
-        public static int GetHistoryCount() => history.Count;
+        public static int GetHistoryCount() => _history.Count;
 
         /// <summary>
         /// Retrieves the message at the specified index in the history.
@@ -101,8 +116,8 @@ namespace Mistral.AI
         /// <returns>The Message object if index is valid; otherwise, null.</returns>
         public static Message GetMessageAt(int index)
         {
-            if (index >= 0 && index < history.Count)
-                return history[index];
+            if (index >= 0 && index < _history.Count)
+                return _history[index];
             return null;
         }
 
@@ -110,7 +125,7 @@ namespace Mistral.AI
         /// Gets the current AI response.
         /// </summary>
         /// <returns>The latest response string from the AI.</returns>
-        public static string GetCurrentResponse() => currentResponse;
+        public static string GetCurrentResponse() => _currentResponse;
 
         /// <summary>
         /// Saves the conversation history to a JSON file at the specified path.
@@ -119,7 +134,7 @@ namespace Mistral.AI
         public static void SaveHistoryToFile(string filePath)
         {
             List<Dictionary<string, string>> historyData = new List<Dictionary<string, string>>();
-            foreach (var msg in history)
+            foreach (var msg in _history)
             {
                 historyData.Add(new Dictionary<string, string>
                 {
@@ -147,11 +162,11 @@ namespace Mistral.AI
 
             string json = System.IO.File.ReadAllText(filePath);
             var historyData = JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(json);
-            history.Clear();
+            _history.Clear();
             foreach (var item in historyData)
             {
                 if (item.ContainsKey("role") && item.ContainsKey("content"))
-                    history.Add(new Message(item["role"], item["content"]));
+                    _history.Add(new Message(item["role"], item["content"]));
             }
             Debug.Log("History loaded!");
         }
@@ -163,7 +178,7 @@ namespace Mistral.AI
         public static Dictionary<string, int> GetMessageCountByRole()
         {
             Dictionary<string, int> counts = new Dictionary<string, int>();
-            foreach (var msg in history)
+            foreach (var msg in _history)
             {
                 string role = msg.GetRole();
                 if (counts.ContainsKey(role))
@@ -182,7 +197,7 @@ namespace Mistral.AI
         public static List<Message> SearchMessages(string keyword)
         {
             List<Message> results = new List<Message>();
-            foreach (var msg in history)
+            foreach (var msg in _history)
             {
                 if (msg.GetContent().ToLower().Contains(keyword.ToLower()))
                     results.Add(msg);
@@ -198,11 +213,11 @@ namespace Mistral.AI
         /// <returns>True if the message was successfully edited; otherwise, false.</returns>
         public static bool EditMessage(int index, string newContent)
         {
-            if (index >= 0 && index < history.Count)
+            if (index >= 0 && index < _history.Count)
             {
-                Message msg = history[index];
+                Message msg = _history[index];
                 Message updatedMsg = new Message(msg.GetRole(), newContent);
-                history[index] = updatedMsg;
+                _history[index] = updatedMsg;
                 return true;
             }
             return false;
@@ -214,9 +229,9 @@ namespace Mistral.AI
         /// <returns>The total dialog time in seconds.</returns>
         public static float GetTotalDialogTime()
         {
-            if (messageTimestamps.Count < 2)
+            if (_messageTimestamps.Count < 2)
                 return 0f;
-            return messageTimestamps[messageTimestamps.Count - 1] - messageTimestamps[0];
+            return _messageTimestamps[_messageTimestamps.Count - 1] - _messageTimestamps[0];
         }
 
         /// <summary>
@@ -226,7 +241,7 @@ namespace Mistral.AI
         public static string ExportHistoryToMarkdown()
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
-            foreach (var msg in history)
+            foreach (var msg in _history)
                 sb.AppendLine($"**{msg.GetRole()}:** {msg.GetContent()}\n");
             return sb.ToString();
         }
@@ -244,7 +259,7 @@ namespace Mistral.AI
         /// <param name="monoBehaviour">The MonoBehaviour to run the coroutine.</param>
         public static void SendRequest(string request, MonoBehaviour monoBehaviour)
         {
-            if (!hasResponded)
+            if (!_hasResponded)
             {
                 Debug.LogWarning("AI has not responded to the previous request, sending is unavailable.");
                 return;
@@ -281,16 +296,16 @@ namespace Mistral.AI
         {
             if (string.IsNullOrEmpty(request))
                 return;
-            history.Add(new Message("user", request));
+            _history.Add(new Message("user", request));
             monoBehaviour.StartCoroutine(SendRequestEnumerator(request, apiKey, apiUrl, modelType));
             AddMessageTimestamp();
-            hasResponded = false;
+            _hasResponded = false;
         }
 
         private static IEnumerator SendRequestEnumerator(string prompt, string apiKey, string apiUrl, ModelType modelType)
         {
-            currentResponse = "";
-            var messages = new List<Message>(history) { new Message("user", prompt) };
+            _currentResponse = "";
+            var messages = new List<Message>(_history) { new Message("user", prompt) };
             var requestData = new Request(GetModelName(modelType), messages.ToArray());
             string jsonData = JsonConvert.SerializeObject(requestData);
 
@@ -310,28 +325,28 @@ namespace Mistral.AI
                     if (response?.GetChoices() != null && response.GetChoices().Length > 0)
                     {
                         string reply = response.GetChoices()[0].GetMessage().GetContent();
-                        currentResponse = reply;
-                        history.Add(new Message("assistant", reply));
-                        hasResponded = true;
+                        _currentResponse = reply;
+                        _history.Add(new Message("assistant", reply));
+                        _hasResponded = true;
                     }
                     else
                     {
                         Debug.LogWarning("Received an empty response from AI.");
-                        history.Add(new Message("assistant", "Empty response."));
-                        hasResponded = true;
+                        _history.Add(new Message("assistant", "Empty response."));
+                        _hasResponded = true;
                     }
                 }
                 else
                 {
                     Debug.LogError($"Error: {request.error}");
                     Debug.LogError($"Server response: {request.downloadHandler.text}");
-                    history.Add(new Message("assistant", "Error retrieving response."));
-                    hasResponded = true;
+                    _history.Add(new Message("assistant", "Error retrieving response."));
+                    _hasResponded = true;
                 }
             }
         }
 
-        private static void AddMessageTimestamp() => messageTimestamps.Add(Time.time);
+        private static void AddMessageTimestamp() => _messageTimestamps.Add(Time.time);
 
         private static string GetModelName(ModelType modelType)
         {
@@ -354,22 +369,22 @@ namespace Mistral.AI
         public class Request
         {
             [JsonProperty("model")]
-            private string model;
+            private string _model;
 
             [JsonProperty("messages")]
-            private Message[] messages;
+            private Message[] _messages;
 
             /// <summary>
             /// Gets the model name.
             /// </summary>
             /// <returns>The model name as a string.</returns>
-            public string GetModel() => model;
+            public string GetModel() => _model;
 
             /// <summary>
             /// Gets the array of messages.
             /// </summary>
             /// <returns>An array of Message objects.</returns>
-            public Message[] GetMessages() => messages;
+            public Message[] GetMessages() => _messages;
 
             /// <summary>
             /// Initializes a new instance of the Request class.
@@ -378,8 +393,8 @@ namespace Mistral.AI
             /// <param name="messages">Array of messages.</param>
             public Request(string model, Message[] messages)
             {
-                this.model = model;
-                this.messages = messages;
+                this._model = model;
+                this._messages = messages;
             }
         }
 
@@ -389,22 +404,22 @@ namespace Mistral.AI
         public class Message
         {
             [JsonProperty("role")]
-            private string role;
+            private string _role;
 
             [JsonProperty("content")]
-            private string content;
+            private string _content;
 
             /// <summary>
             /// Gets the role of the message sender (e.g., user, assistant).
             /// </summary>
             /// <returns>The role as a string.</returns>
-            public string GetRole() => role;
+            public string GetRole() => _role;
 
             /// <summary>
             /// Gets the message content.
             /// </summary>
             /// <returns>The message content as a string.</returns>
-            public string GetContent() => content;
+            public string GetContent() => _content;
 
             /// <summary>
             /// Initializes a new instance of the Message class.
@@ -413,8 +428,8 @@ namespace Mistral.AI
             /// <param name="content">The message content.</param>
             public Message(string role, string content)
             {
-                this.role = role;
-                this.content = content;
+                this._role = role;
+                this._content = content;
             }
         }
 
@@ -424,13 +439,13 @@ namespace Mistral.AI
         public class Response
         {
             [JsonProperty("choices")]
-            private Choice[] choices;
+            private Choice[] _choices;
 
             /// <summary>
             /// Gets the array of choices returned by the API.
             /// </summary>
             /// <returns>An array of Choice objects.</returns>
-            public Choice[] GetChoices() => choices;
+            public Choice[] GetChoices() => _choices;
         }
 
         /// <summary>
@@ -439,13 +454,13 @@ namespace Mistral.AI
         public class Choice
         {
             [JsonProperty("message")]
-            private Message message;
+            private Message _message;
 
             /// <summary>
             /// Gets the message associated with this choice.
             /// </summary>
             /// <returns>The Message object.</returns>
-            public Message GetMessage() => message;
+            public Message GetMessage() => _message;
         }
 
         /// <summary>
